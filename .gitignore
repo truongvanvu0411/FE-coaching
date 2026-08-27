@@ -55,3 +55,10 @@ next-env.d.ts
 
 # deploy key material — never commit
 /deploy/*.pem
+
+# Vendored AI-tooling skill bundles — three identical copies of the same Prisma
+# docs (1.3 MB), reinstallable and not project source. launch.json is kept: it
+# is the real dev-server definition.
+/.agents
+/.windsurf
+/.claude/skills
