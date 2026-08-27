@@ -44,9 +44,10 @@ done
 [ "${status:-}" = healthy ] || { echo "App did not become healthy. Logs:" >&2; $COMPOSE logs --tail 50 app >&2; exit 1; }
 
 # Only on a fresh database — never clobber data that is already there.
-if [ -f content.dump ] && [ "$($COMPOSE exec -T postgres psql -U fecoach -tAc 'select count(*) from "Question"' 2>/dev/null || echo 0)" = "0" ]; then
+DUMP=prisma/snapshot/content.dump
+if [ -f "$DUMP" ] && [ "$($COMPOSE exec -T postgres psql -U fecoach -tAc 'select count(*) from "Question"' 2>/dev/null || echo 0)" = "0" ]; then
   echo "==> Restoring question data"
-  $COMPOSE cp content.dump postgres:/tmp/content.dump
+  $COMPOSE cp "$DUMP" postgres:/tmp/content.dump
   $COMPOSE exec -T postgres pg_restore -U fecoach -d fecoach --clean --if-exists /tmp/content.dump || true
   $COMPOSE exec -T postgres rm -f /tmp/content.dump
 fi
