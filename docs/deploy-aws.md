@@ -114,14 +114,34 @@ docker exec fecoaching-postgres-1 pg_dump -U fecoach -Fc \
   fecoach > content.dump
 ```
 
-## 5. DNS
+## 5. DNS — not in Route 53
+
+**`cjp-demo.online` is not delegated to Route 53.** Its nameservers are
+`aurora.dns-parking.com` and `nebula.dns-parking.com` (Hostinger), so the live
+records are managed in the registrar's DNS panel. The Route 53 hosted zone
+`Z0509114EKAJXTEAFO5J` exists and answers when queried directly, but nothing on
+the internet asks it — writing a record there has no effect.
+
+The giveaway: `pbasisba.cjp-demo.online` resolves publicly but does not appear in
+the Route 53 zone at all.
+
+Add the record where the real DNS lives:
+
+| Type | Name | Value | TTL |
+|---|---|---|---|
+| A | `fe-coach` | `54.248.181.37` | 300 |
+
+Caddy retries ACME on its own, so the certificate appears a minute or two after
+the record propagates. To stop waiting and force it:
 
 ```bash
-aws route53 change-resource-record-sets --hosted-zone-id Z0509114EKAJXTEAFO5J --change-batch '{
-  "Changes": [{ "Action": "UPSERT", "ResourceRecordSet": {
-    "Name": "fe-coach.cjp-demo.online", "Type": "A", "TTL": 300,
-    "ResourceRecords": [{"Value": "54.248.181.37"}] } }]
-}'
+docker exec -w /etc/caddy proposal-management-caddy-1 caddy reload --config /etc/caddy/Caddyfile
+```
+
+Until then Caddy logs, correctly:
+
+```
+challenge failed ... DNS problem: NXDOMAIN looking up A for fe-coach.cjp-demo.online
 ```
 
 ## 6. Verify
