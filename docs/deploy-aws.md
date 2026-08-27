@@ -42,6 +42,19 @@ there takes down **all of them**, not just FE Coach. `cohost-deploy.sh`
 therefore backs the file up, appends rather than rewrites, and runs
 `caddy validate` before `caddy reload`.
 
+## Two things about this box that will bite you
+
+`ubuntu` is **not** in the `docker` group (the group is empty), so every docker
+command needs root — which is why `beautician-diagnosis/deploy.sh` calls `docker`
+directly and still works: it is run under sudo. Drive the deploy as root:
+
+```bash
+aws ssm send-command --region ap-northeast-1 --instance-ids i-0ebe4ead3640dee6b   --document-name AWS-RunShellScript   --parameters 'commands=["cd /home/ubuntu/fe-coach && bash deploy/cohost-deploy.sh"]'
+```
+
+Run `git` as `ubuntu` (`sudo -u ubuntu`), or it refuses the repo for dubious
+ownership.
+
 ## 1. Start the box
 
 ```bash

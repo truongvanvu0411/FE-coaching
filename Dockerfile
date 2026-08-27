@@ -1,9 +1,14 @@
-FROM node:22-slim AS deps
+# Node 24, not 22, for two reasons: it matches the Node the app is developed on,
+# and it bundles npm 11. next@16.2.12 pins @swc/helpers 0.5.15 while next-intl's
+# nested @swc/core wants >=0.5.17; npm 11 dedupes and accepts that tree, npm 10
+# (bundled with node:22) rejects it and `npm ci` fails with
+# "Missing: @swc/helpers@0.5.23 from lock file".
+FROM node:24-slim AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 
-FROM node:22-slim AS builder
+FROM node:24-slim AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -14,14 +19,14 @@ RUN npm run build
 # Kept as its own stage (rather than an app entrypoint) so the migration has the
 # full node_modules the Prisma CLI needs, while the runner image stays lean and
 # so two app containers can never race the same migration.
-FROM node:22-slim AS migrator
+FROM node:24-slim AS migrator
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json prisma.config.ts tsconfig.json ./
 COPY prisma ./prisma
 CMD ["npx", "prisma", "migrate", "deploy"]
 
-FROM node:22-slim AS runner
+FROM node:24-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 # Next's standalone server binds to localhost unless told otherwise, which is
