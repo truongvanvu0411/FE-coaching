@@ -1,0 +1,71 @@
+# Co-hosted variant: this app shares an EC2 box with three other projects, so it
+# brings no Caddy of its own — the existing proposal-management Caddy terminates
+# TLS for every site on the host and is joined to this project's network.
+#
+#   docker compose -f docker-compose.cohost.yml up -d
+#
+# Container names are pinned because the shared Caddyfile proxies to
+# `fe-coach-app:3000` by name.
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: fe-coach-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: fecoach
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: fecoach
+    # No host port at all. The only thing that needs this database is the app
+    # container next to it, and the box already exposes one Postgres on 0.0.0.0.
+    volumes:
+      - fecoach_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fecoach"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # No-ops when the schema is already at the latest migration, which is the case
+  # right after restoring a dump that carries _prisma_migrations.
+  migrate:
+    build:
+      context: .
+      target: migrator
+    container_name: fe-coach-migrate
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "postgresql://fecoach:${POSTGRES_PASSWORD}@postgres:5432/fecoach?schema=public"
+    restart: "no"
+
+  app:
+    build:
+      context: .
+      target: runner
+    container_name: fe-coach-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: "postgresql://fecoach:${POSTGRES_PASSWORD}@postgres:5432/fecoach?schema=public"
+      NEXTAUTH_URL: "https://${APP_DOMAIN:?set APP_DOMAIN in .env}"
+      AUTH_TRUST_HOST: "true"
+    # 2 GB box with four other stacks on it: cap this app so a runaway here
+    # cannot take the others down with it.
+    mem_limit: 512m
+    expose:
+      - "3000"
+    volumes:
+      - fecoach_uploads:/app/storage/uploads
+      - fecoach_review:/app/storage/review
+
+volumes:
+  fecoach_pg_data:
+  fecoach_uploads:
+  fecoach_review:

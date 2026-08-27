@@ -1,0 +1,13 @@
+# Normalise to LF in the repository. Without this, shell scripts checked out on
+# the Linux host arrive with CRLF and fail with "bad interpreter: /bin/bash^M".
+* text=auto eol=lf
+
+*.sh text eol=lf
+Dockerfile text eol=lf
+*.yml text eol=lf
+
+# Binary — never touch line endings.
+*.png binary
+*.pdf binary
+*.dump binary
+*.traineddata binary

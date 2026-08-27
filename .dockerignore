@@ -1,0 +1,23 @@
+# Build context hygiene. Without this the context is ~514 MB, almost all of it
+# storage/ (OCR source PDFs and rendered review pages) which the image never needs.
+node_modules
+.next
+.git
+.tmp
+
+# Local data + generated review/OCR artifacts (500 MB). The app reads
+# storage/review at runtime from a mounted volume, not from the image.
+storage
+candidates-*
+ocr-*
+test-results
+playwright-report
+*.traineddata
+
+.env
+.env.*
+!.env.example
+
+docs
+tests
+*.md

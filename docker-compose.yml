@@ -1,0 +1,39 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: fecoach
+      POSTGRES_PASSWORD: fecoach_dev_pw
+      POSTGRES_DB: fecoach
+    # Host 5434 -> container 5432. Other projects on this machine already claim
+    # 5432 (papipo) and 5433 (papermark/templatedoc).
+    ports:
+      - "5434:5432"
+    volumes:
+      - fecoach_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fecoach"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: "postgresql://fecoach:fecoach_dev_pw@postgres:5432/fecoach?schema=public"
+      NEXTAUTH_URL: "http://localhost:3000"
+    ports:
+      - "3000:3000"
+    volumes:
+      - fecoach_uploads:/app/storage/uploads
+
+volumes:
+  fecoach_pg_data:
+  fecoach_uploads:

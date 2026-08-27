@@ -1,0 +1,245 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  LEARNER
+  REVIEWER
+  ADMIN
+}
+
+enum Section {
+  A
+  B
+}
+
+enum SourceType {
+  IPA_PUBLIC
+  IPA_EXEMPTION
+  LEGACY_MORNING
+  ORIGINAL_PRACTICE
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum ReviewStatus {
+  DRAFT
+  PENDING_REVIEW
+  VERIFIED
+  REJECTED
+}
+
+enum TranslationStatus {
+  MT_DRAFT
+  HUMAN_REVIEWED
+}
+
+enum IngestJobStatus {
+  UPLOADED
+  OCR_RUNNING
+  OCR_DONE
+  PARSED
+  FAILED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  role         Role     @default(LEARNER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  attempts          Attempt[]
+  bookmarks         Bookmark[]
+  aiChatLogs        AiChatLog[]
+  reviewedQuestions Question[]     @relation("ReviewedBy")
+  flags             QuestionFlag[]
+}
+
+model Topic {
+  id        String     @id @default(cuid())
+  section   Section
+  nameJa    String
+  nameVi    String
+  parentId  String?
+  parent    Topic?     @relation("TopicChildren", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children  Topic[]    @relation("TopicChildren")
+  questions Question[]
+
+  @@index([section])
+}
+
+model Question {
+  id             String     @id
+  section        Section
+  year           Int?
+  sourceType     SourceType
+  sourceUrl      String?
+  sourcePage     String?
+  questionNumber String?
+
+  topic   Topic  @relation(fields: [topicId], references: [id])
+  topicId String
+
+  difficulty Difficulty
+
+  bodyJa       String
+  bodyVi       String?
+  bodyViStatus TranslationStatus @default(MT_DRAFT)
+
+  choices       Choice[]
+  correctAnswer String
+
+  explanationJa       String?
+  explanationVi       String?
+  explanationViStatus TranslationStatus @default(MT_DRAFT)
+
+  vocabulary VocabItem[]
+  assets     Asset[]
+
+  isObsolete   Boolean      @default(false)
+  verified     Boolean      @default(false)
+  reviewStatus ReviewStatus @default(DRAFT)
+
+  reviewedById String?
+  reviewedBy   User?     @relation("ReviewedBy", fields: [reviewedById], references: [id])
+  reviewedAt   DateTime?
+
+  duplicateOfId String?
+  duplicateOf   Question?  @relation("QuestionDuplicates", fields: [duplicateOfId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  duplicates    Question[] @relation("QuestionDuplicates")
+
+  ingestJobId String?
+  ingestJob   IngestJob? @relation(fields: [ingestJobId], references: [id])
+
+  attempts   Attempt[]
+  bookmarks  Bookmark[]
+  aiChatLogs AiChatLog[]
+  flags      QuestionFlag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([section, topicId])
+  @@index([sourceType])
+  @@index([sourceType, verified])
+  @@index([reviewStatus])
+  @@index([verified, isObsolete])
+  @@index([verified, reviewStatus, isObsolete, createdAt])
+  @@index([topicId, difficulty, verified, reviewStatus])
+}
+
+model Choice {
+  id         String   @id @default(cuid())
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId String
+  key        String
+  textJa     String
+  textVi     String?
+  order      Int      @default(0)
+
+  @@index([questionId])
+}
+
+model VocabItem {
+  id         String   @id @default(cuid())
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId String
+  termJa     String
+  reading    String?
+  meaningVi  String
+
+  @@index([questionId])
+}
+
+model Asset {
+  id         String   @id @default(cuid())
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId String
+  type       String
+  url        String
+  alt        String?
+
+  @@index([questionId])
+}
+
+model IngestJob {
+  id          String          @id @default(cuid())
+  fileName    String
+  fileUrl     String
+  sourceType  SourceType
+  status      IngestJobStatus @default(UPLOADED)
+  ocrText     String?
+  parseErrors String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  questions Question[]
+
+  @@index([status, createdAt])
+}
+
+model Attempt {
+  id           String   @id @default(cuid())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+  question     Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId   String
+  chosenAnswer String
+  isCorrect    Boolean
+  mode         String   @default("practice")
+  createdAt    DateTime @default(now())
+
+  @@index([userId, questionId])
+  @@index([userId, createdAt])
+  @@index([userId, isCorrect])
+}
+
+model Bookmark {
+  userId     String
+  questionId String
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@id([userId, questionId])
+}
+
+model QuestionFlag {
+  id         String   @id @default(cuid())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId String
+  reason     String
+  resolved   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([questionId])
+}
+
+model AiChatLog {
+  id         String    @id @default(cuid())
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  question   Question? @relation(fields: [questionId], references: [id], onDelete: SetNull)
+  questionId String?
+  action     String
+  role       String
+  content    String
+  createdAt  DateTime  @default(now())
+
+  @@index([userId, createdAt])
+}
