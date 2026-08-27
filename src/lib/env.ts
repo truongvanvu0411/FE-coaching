@@ -19,6 +19,19 @@ function required(name: string) {
 }
 
 export function databaseUrl() {
+  const value = process.env.DATABASE_URL;
+  if (value) return value;
+
+  // `next build` evaluates every route module to collect page data, and it does
+  // so with no runtime environment — the image deliberately has no .env. Nothing
+  // touches the database in that phase, so the adapter gets a syntactically valid
+  // placeholder instead of failing the build. Next sets NEXT_PHASE itself
+  // (next/dist/build/index.js), so this cannot be spoofed by a missing variable
+  // at runtime, where the throw below still applies.
+  if (process.env.NEXT_PHASE === "phase-production-build") {
+    return "postgresql://build:build@127.0.0.1:5432/build";
+  }
+
   return required("DATABASE_URL");
 }
 
