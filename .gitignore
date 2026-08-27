@@ -32,6 +32,10 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# ...except the templates. These carry no values, and the deploy runbook tells
+# you to copy .env.production.example on the host — it has to actually be there.
+!.env.example
+!.env.production.example
 
 # vercel
 .vercel
