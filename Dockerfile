@@ -21,9 +21,17 @@ RUN npm run build
 # so two app containers can never race the same migration.
 FROM node:24-slim AS migrator
 WORKDIR /app
+# The Prisma CLI probes for libssl even with driver adapters, and node:*-slim
+# ships without it — harmless, but it prints a scary paragraph into every deploy
+# log otherwise.
+RUN apt-get update && apt-get install -y --no-install-recommends openssl     && rm -rf /var/lib/apt/lists/*
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json prisma.config.ts tsconfig.json ./
 COPY prisma ./prisma
+# `prisma db seed` runs prisma/seed.ts, which imports the generated client from
+# ../src/generated/prisma. Take the builder's copy rather than generating again,
+# so the seed and the app always run the exact same client build.
+COPY --from=builder /app/src/generated ./src/generated
 CMD ["npx", "prisma", "migrate", "deploy"]
 
 FROM node:24-slim AS runner
