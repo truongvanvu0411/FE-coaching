@@ -41,10 +41,16 @@ verified question bank rather than bulk-scraped content. See
 4. **Run migrations + seed**:
    ```bash
    npx prisma migrate dev --name init
-   npx prisma db seed
+   SEED_ADMIN_PASSWORD=ChangeMe123! npx prisma db seed
    ```
-   Seeds a topic taxonomy, one admin user (`admin@fecoach.local` / `ChangeMe123!` — change this in
-   any shared environment), and one sample `ORIGINAL_PRACTICE` question so the app isn't empty.
+   Seeds a topic taxonomy, one admin user (`admin@fecoach.local`), and one sample
+   `ORIGINAL_PRACTICE` question so the app isn't empty.
+
+   The seed generates a random admin password and prints it once unless
+   `SEED_ADMIN_PASSWORD` is set — this repository is public, so a hardcoded default would
+   publish the admin credentials of every deployment. The command above pins the password
+   the e2e tests expect (`tests/e2e/*.spec.ts`, overridable with `E2E_ADMIN_PASSWORD`);
+   omit it in any shared environment and save the printed password instead.
 5. **Run the dev server**:
    ```bash
    npm run dev

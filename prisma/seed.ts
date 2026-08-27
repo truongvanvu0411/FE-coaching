@@ -1,6 +1,7 @@
 import { PrismaClient } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import bcrypt from "bcryptjs";
+import { randomBytes } from "node:crypto";
 
 const adapter = new PrismaPg(process.env.DATABASE_URL!);
 const prisma = new PrismaClient({ adapter });
@@ -39,8 +40,13 @@ async function main() {
   }
 
   console.log("Seeding admin user...");
-  const adminEmail = "admin@fecoach.local";
-  const passwordHash = await bcrypt.hash("ChangeMe123!", 12);
+  const adminEmail = process.env.SEED_ADMIN_EMAIL ?? "admin@fecoach.local";
+  // This repository is public, so a hardcoded default would publish the admin
+  // password of every deployment that ran the seed. Generate one instead and
+  // print it once — it is never recoverable afterwards, only resettable.
+  const adminPassword =
+    process.env.SEED_ADMIN_PASSWORD ?? randomBytes(12).toString("base64url");
+  const passwordHash = await bcrypt.hash(adminPassword, 12);
   await prisma.user.upsert({
     where: { email: adminEmail },
     update: {},
@@ -51,6 +57,12 @@ async function main() {
       passwordHash,
     },
   });
+  console.log(
+    `  admin: ${adminEmail}
+  password: ${adminPassword}
+  ` +
+      `Save this now — it is not stored anywhere else. Change it after first login.`,
+  );
 
   console.log("Seeding sample original-practice questions...");
   await prisma.question.upsert({
