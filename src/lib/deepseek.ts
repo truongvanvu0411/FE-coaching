@@ -2,6 +2,7 @@ type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 
 const BASE_URL = process.env.DEEPSEEK_BASE_URL ?? "https://api.deepseek.com";
 const MODEL = process.env.DEEPSEEK_MODEL ?? "deepseek-chat";
+const TIMEOUT_MS = 60_000;
 
 export class DeepSeekError extends Error {}
 
@@ -14,19 +15,35 @@ export async function chatCompletion(
     throw new DeepSeekError("DEEPSEEK_API_KEY is not configured");
   }
 
-  const res = await fetch(`${BASE_URL}/chat/completions`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      messages,
-      temperature: opts?.temperature ?? 0.4,
-      ...(opts?.responseJson ? { response_format: { type: "json_object" } } : {}),
-    }),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${BASE_URL}/chat/completions`, {
+      method: "POST",
+      // Without a deadline a stalled upstream holds a server connection open
+      // indefinitely; the app runs in a 512 MB container next to three other
+      // projects, so a handful of those is enough to matter.
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        messages,
+        temperature: opts?.temperature ?? 0.4,
+        ...(opts?.responseJson ? { response_format: { type: "json_object" } } : {}),
+      }),
+    });
+  } catch (cause) {
+    // A timeout or a network failure would otherwise escape as a raw
+    // DOMException and surface to the client as a 500. Callers already map
+    // DeepSeekError to 502, which is what an upstream failure actually is.
+    const reason =
+      cause instanceof Error && cause.name === "TimeoutError"
+        ? `timed out after ${TIMEOUT_MS / 1000}s`
+        : "could not be reached";
+    throw new DeepSeekError(`DeepSeek ${reason}`, { cause });
+  }
 
   if (!res.ok) {
     const text = await res.text().catch(() => "");

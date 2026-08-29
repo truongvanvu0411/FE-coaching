@@ -3,6 +3,7 @@ import { z } from "zod";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { chatCompletion, buildGroundedSystemPrompt, DeepSeekError } from "@/lib/deepseek";
+import { checkAiRateLimit, rateLimitResponse } from "@/lib/rate-limit";
 
 const schema = z.object({
   questionId: z.string().min(1),
@@ -15,6 +16,12 @@ export async function POST(request: Request) {
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  // Checked before any work: every call past this point costs money, and
+  // registration is open, so the account making the request is not necessarily
+  // one we invited.
+  const rate = await checkAiRateLimit(session.user.id);
+  if (!rate.allowed) return rateLimitResponse(rate);
 
   const parsed = schema.safeParse(await request.json());
   if (!parsed.success) {

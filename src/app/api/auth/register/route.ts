@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { registrationOpen } from "@/lib/env";
 
 const registerSchema = z.object({
   name: z.string().min(1).max(100),
@@ -10,6 +11,10 @@ const registerSchema = z.object({
 });
 
 export async function POST(request: Request) {
+  if (!registrationOpen()) {
+    return NextResponse.json({ error: "Registration is closed" }, { status: 403 });
+  }
+
   const body = await request.json();
   const parsed = registerSchema.safeParse(body);
 

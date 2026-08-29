@@ -48,3 +48,12 @@ export function assertProductionEnv() {
     required("NEXTAUTH_URL");
   }
 }
+
+/**
+ * Registration is open to anyone who finds the URL, and every account it
+ * creates can spend DeepSeek credit through /api/tutor. This app has one user,
+ * so the endpoint is closed unless explicitly opened.
+ */
+export function registrationOpen() {
+  return process.env.ALLOW_REGISTRATION === "true";
+}
