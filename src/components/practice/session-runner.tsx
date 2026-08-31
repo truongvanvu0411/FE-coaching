@@ -147,7 +147,13 @@ export function SessionRunner({
 
   return (
     <div className="mx-auto max-w-[1320px] space-y-5 px-4 py-5 md:px-8 md:py-8">
-      <div className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200/80 bg-white px-4 py-3 shadow-sm dark:border-border dark:bg-card md:px-5">
+      {/* The visual baseline snapshots this bar rather than the page: the
+          question itself is drawn at random, so a full-page shot would diff on
+          every run. See tests/visual/visual.spec.ts. */}
+      <div
+        data-testid="session-chrome"
+        className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200/80 bg-white px-4 py-3 shadow-sm dark:border-border dark:bg-card md:px-5"
+      >
         <div className="min-w-0">
           <p className="truncate text-xs font-bold uppercase tracking-[0.16em] text-primary">{mode === "mock_exam" ? t("nav.mockExam") : t("nav.practice")}</p>
           <p className="mt-1 text-sm font-semibold">{index + 1} / {questions.length}</p>
