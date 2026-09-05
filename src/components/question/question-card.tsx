@@ -45,7 +45,13 @@ export function QuestionCard({
   const [submitting, setSubmitting] = useState(false);
   const [bookmarked, setBookmarked] = useState(initialBookmarked);
 
-  const body = locale === "vi" && question.bodyVi ? question.bodyVi : question.bodyJa;
+  // Which string won decides the typography, not the interface locale: a
+  // Vietnamese UI still shows the Japanese body whenever no translation exists,
+  // and kanji need the larger size and looser leading that text-body-ja carries.
+  const bodyIsJa = !(locale === "vi" && question.bodyVi);
+  const body = bodyIsJa ? question.bodyJa : question.bodyVi;
+
+  const choiceIsJa = (choice: { textVi?: string | null }) => !(locale === "vi" && choice.textVi);
 
   const submit = async (key: string) => {
     if (result) return;
@@ -105,7 +111,7 @@ export function QuestionCard({
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="whitespace-pre-wrap text-[0.98rem] leading-7 md:text-base md:leading-7">{body}</p>
+          <p className={cn("whitespace-pre-wrap", bodyIsJa ? "text-body-ja" : "text-body")}>{body}</p>
 
           <div className="space-y-2">
             {question.choices.map((choice) => {
@@ -120,7 +126,7 @@ export function QuestionCard({
                   disabled={!!result || submitting}
                   onClick={() => submit(choice.key)}
                   className={cn(
-                    "flex w-full min-h-14 items-start gap-3 rounded-xl border px-4 py-3.5 text-left text-sm leading-6 transition-all",
+                    "flex w-full min-h-14 items-start gap-3 rounded-xl border px-4 py-3.5 text-left transition-all",
                     !result && "hover:border-primary/40 hover:bg-muted",
                     isChosen && !result && "border-primary ring-1 ring-primary/30",
                     isCorrectChoice && "border-success bg-success/10",
@@ -128,7 +134,9 @@ export function QuestionCard({
                   )}
                 >
                   <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-muted font-semibold">{choice.key}</span>
-                  <span>{locale === "vi" && choice.textVi ? choice.textVi : choice.textJa}</span>
+                  <span className={choiceIsJa(choice) ? "text-body-ja" : "text-body"}>
+                    {choiceIsJa(choice) ? choice.textJa : choice.textVi}
+                  </span>
                 </button>
               );
             })}

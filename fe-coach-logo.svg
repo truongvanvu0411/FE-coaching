@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="160" viewBox="0 0 720 160" role="img" aria-labelledby="logo-title logo-desc">
+  <title id="logo-title">FE Coach</title>
+  <desc id="logo-desc">A modern frontend learning logo with a code-inspired FE monogram and progress accent.</desc>
+
+  <defs>
+    <linearGradient id="mark-gradient" x1="18" y1="16" x2="116" y2="132" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1187F1"/>
+      <stop offset="1" stop-color="#075ACB"/>
+    </linearGradient>
+    <linearGradient id="shine-gradient" x1="30" y1="20" x2="94" y2="112" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="mark-shadow" x="-20%" y="-20%" width="140%" height="150%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#082C58" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <!-- Icon mark: rounded code tile + progress node -->
+  <g filter="url(#mark-shadow)">
+    <rect x="16" y="16" width="128" height="128" rx="38" fill="url(#mark-gradient)"/>
+    <path d="M54 16h52c21 0 38 17 38 38v25C107 76 75 45 54 16Z" fill="url(#shine-gradient)"/>
+  </g>
+
+  <!-- Code brackets frame the FE monogram -->
+  <path d="M45 54 32 80l13 26" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="m115 54 13 26-13 26" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- FE monogram -->
+  <path d="M56 99V61h25M56 80h20" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M101 61H84v38h18M85 80h14" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Progress accent -->
+  <circle cx="133" cy="24" r="12" fill="#38B96B" stroke="#16345A" stroke-width="5"/>
+
+  <!-- Wordmark -->
+  <g font-family="Inter, Manrope, Segoe UI, Arial, sans-serif">
+    <text x="182" y="86" fill="#F5F8FC" font-size="52" font-weight="800" letter-spacing="-2.2">FE <tspan fill="#54A8FF">Coach</tspan></text>
+    <text x="185" y="118" fill="#A7B6C9" font-size="16" font-weight="600" letter-spacing="3.6">HỌC TẬP RÕ RÀNG HƠN</text>
+  </g>
+</svg>

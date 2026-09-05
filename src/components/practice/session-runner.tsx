@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
 import { QuestionCard, type AnswerResult } from "@/components/question/question-card";
-import { TutorPanel } from "@/components/tutor/tutor-panel";
+import { TutorFab } from "@/components/tutor/tutor-fab";
 import type { SafeQuestion } from "@/lib/questions";
 import { cn } from "@/lib/utils";
 
@@ -185,8 +185,6 @@ export function SessionRunner({
             }}
           />
 
-          {showTutor && answered && <div className="mt-4 lg:hidden"><TutorPanel questionId={question.id} /></div>}
-
           {answered && (
             <div className="sticky bottom-20 z-10 mt-4 flex justify-end md:static">
               <Button size="lg" className="w-full shadow-fab sm:w-auto" onClick={next}>{t("common.next")}</Button>
@@ -195,13 +193,16 @@ export function SessionRunner({
         </div>
 
         <aside className="hidden space-y-5 lg:sticky lg:top-6 lg:block">
-          {showTutor && answered && <TutorPanel questionId={question.id} />}
           <div className="rounded-2xl border border-border bg-card p-4 shadow-card">
             <p className="mb-3 text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">Progress</p>
             <QuestionNavigator questions={questions} index={index} maxVisited={maxVisited} answers={answers} onSelect={goTo} />
           </div>
         </aside>
       </div>
+
+      {/* Same gate the inline panel had (showTutor && answered): the tutor must
+          not be reachable before the learner commits to an answer. */}
+      <TutorFab questionId={question.id} enabled={showTutor && answered} />
     </div>
   );
 }

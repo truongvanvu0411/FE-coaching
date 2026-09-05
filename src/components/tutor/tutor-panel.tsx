@@ -22,7 +22,19 @@ import { cn } from "@/lib/utils";
 type ChatEntry = { role: "user" | "assistant"; content: string };
 type TutorAction = "explain" | "translate" | "chat";
 
-export function TutorPanel({ questionId }: { questionId: string }) {
+export function TutorPanel({
+  questionId,
+  bare = false,
+}: {
+  questionId: string;
+  /**
+   * Render only the conversation, without the desktop card or the mobile sheet
+   * trigger this component normally wraps it in. TutorFab already provides its
+   * own surface; without this, opening the tutor on a phone would put a drawer
+   * inside a drawer.
+   */
+  bare?: boolean;
+}) {
   const t = useTranslations();
   const [history, setHistory] = useState<ChatEntry[]>([]);
   const [message, setMessage] = useState("");
@@ -83,6 +95,8 @@ export function TutorPanel({ questionId }: { questionId: string }) {
       bottomRef={bottomRef}
     />
   );
+
+  if (bare) return content;
 
   return (
     <>

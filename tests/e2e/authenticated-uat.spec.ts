@@ -32,12 +32,19 @@ test.describe("authenticated learner UAT", () => {
     const answer = page.locator("button.min-h-14").first();
     await answer.click();
     await expect(answer).toBeDisabled();
-    if ((page.viewportSize()?.width ?? 0) >= 768) {
-      const explain = page.getByRole("button", { name: /giải thích giúp|explain/i });
-      await expect(explain).toBeVisible();
-      await explain.click();
-      await expect(page.getByText("UAT tutor response")).toBeVisible();
-    }
+    // The tutor moved out of an inline panel into a floating action button. It
+    // still appears only after an answer is submitted — that gate is the point,
+    // not the layout — so the button is opened here before the panel exists.
+    const tutorFab = page.getByRole("button", { name: /trợ lý ai|ai tutor/i });
+    // The button only mounts once the answer POST resolves, which on the mobile
+    // project runs past the 5s default often enough to flake.
+    await expect(tutorFab).toBeVisible({ timeout: 15_000 });
+    await tutorFab.click();
+    const explain = page.getByRole("button", { name: /giải thích giúp|explain/i });
+    await expect(explain).toBeVisible();
+    await explain.click();
+    await expect(page.getByText("UAT tutor response")).toBeVisible();
+    await page.getByRole("button", { name: /đóng|close/i }).click();
     await expect(page.getByRole("button", { name: /lưu lại|bookmark/i })).toBeVisible();
 
     const bookmark = page.getByRole("button", { name: /lưu lại|bookmark/i });

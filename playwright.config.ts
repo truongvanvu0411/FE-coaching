@@ -22,6 +22,11 @@ export default defineConfig({
   ],
   webServer: {
     command: "npm run dev -- --hostname 127.0.0.1",
+    // Registration is closed by default now (ALLOW_REGISTRATION unset), because
+    // the deployed site is public and every account can spend DeepSeek credit.
+    // The suite still needs to exercise the endpoint's validation, so it runs
+    // with the flag on — production does not.
+    env: { ALLOW_REGISTRATION: "true" },
     url: `${baseURL}/vi/login`,
     reuseExistingServer: true,
     timeout: 120_000,
