@@ -107,7 +107,7 @@ export default function IngestPage() {
         </Button>
       </div>
 
-      <Card className="border-0 shadow-sm">
+      <Card className="border-0 shadow-card">
         <CardHeader>
           <CardTitle className="text-base">{t("admin.uploadPdf")}</CardTitle>
         </CardHeader>
@@ -161,7 +161,7 @@ export default function IngestPage() {
         <div className="space-y-3">
           {jobs.map((job) => (
             <Link key={job.id} href={`/admin/ingest/${job.id}`} className="block">
-              <Card className="border-0 shadow-sm transition-colors hover:bg-muted/60">
+              <Card className="border-0 shadow-card transition-colors hover:bg-muted/60">
                 <CardContent className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
                   <div className="min-w-0">
                     <p className="truncate font-medium">{job.fileName}</p>

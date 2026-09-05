@@ -52,7 +52,7 @@ export default function LoginPage() {
   };
 
   return (
-    <Card className="border-0 shadow-2xl shadow-black/20">
+    <Card className="border-0 shadow-sheet">
       <CardHeader>
         <CardTitle>{t("auth.loginTitle")}</CardTitle>
         <CardDescription>{t("common.appName")}</CardDescription>

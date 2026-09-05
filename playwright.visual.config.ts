@@ -18,6 +18,8 @@ export default defineConfig({
   workers: 1,
   forbidOnly: Boolean(process.env.CI),
   retries: 0,
+  // One test captures 20 full-page screenshots; the 30s default is not enough.
+  timeout: 180_000,
   reporter: [["list"]],
   // One file per locale/theme/screen, grouped by project.
   snapshotPathTemplate: "{testDir}/__screenshots__/{projectName}/{arg}{ext}",
@@ -27,9 +29,12 @@ export default defineConfig({
   },
   expect: {
     toHaveScreenshot: {
-      // A token refactor that changes nothing should change nothing. Allow only
-      // the handful of pixels antialiasing moves between runs on the same box.
-      maxDiffPixels: 40,
+      // The page gradient dithers differently between renders: two consecutive
+      // captures of the same build measured 189 differing pixels out of 1.9M
+      // (0.01%). A tolerance below that turns every run red for no reason.
+      // 0.1% is ten times the observed noise and still far below any real
+      // change — a recoloured surface moves pixels by the hundred thousand.
+      maxDiffPixelRatio: 0.001,
       animations: "disabled",
       caret: "hide",
       scale: "css",

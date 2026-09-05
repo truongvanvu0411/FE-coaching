@@ -85,7 +85,7 @@ export function QuestionCard({
 
   return (
     <div className="space-y-4">
-      <Card className="border-0 shadow-sm">
+      <Card className="border-0 shadow-card">
         <CardHeader className="flex flex-row items-start justify-between gap-3 border-b bg-muted/20">
           <div className="flex flex-wrap gap-2">
             <Badge variant="outline">{question.section}</Badge>

@@ -2,9 +2,12 @@ export default function AuthLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className="relative flex min-h-screen flex-1 items-center justify-center overflow-hidden bg-[#11152e] px-4 py-12">
-      <div className="absolute -left-20 top-10 size-80 rounded-full bg-indigo-500/20 blur-3xl" />
-      <div className="absolute -bottom-40 -right-20 size-[28rem] rounded-full bg-violet-500/20 blur-3xl" />
+    // Same gradient as the app shell, so signing in and using the app feel like
+    // one product rather than two. Replaces a near-black panel with two orbs.
+    <div
+      className="relative flex min-h-screen flex-1 items-center justify-center overflow-hidden px-4 py-12"
+      style={{ backgroundImage: "linear-gradient(150deg, var(--surface-page-from) 0%, var(--surface-page-to) 55%)" }}
+    >
       <div className="relative w-full max-w-sm">{children}</div>
     </div>
   );

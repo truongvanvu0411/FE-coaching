@@ -31,21 +31,24 @@ export function AppShell({
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
-    <div className="min-h-screen bg-[#f6f7fb] md:flex dark:bg-[#0b1020]">
+    <div
+      className="min-h-screen md:flex"
+      style={{ backgroundImage: "linear-gradient(150deg, var(--surface-page-from) 0%, var(--surface-page-to) 55%)" }}
+    >
       {/* Desktop sidebar */}
-      <aside className="sticky top-0 hidden h-screen w-[268px] shrink-0 flex-col bg-[#111827] text-white shadow-2xl shadow-slate-950/10 md:flex">
+      <aside className="sticky top-0 hidden h-screen w-[268px] shrink-0 flex-col bg-surface-rail text-surface-rail-foreground shadow-sheet md:flex">
         <div className="flex h-24 items-center gap-3 px-7">
-          <span className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-400 to-violet-500 text-sm font-bold shadow-lg shadow-indigo-500/30">
-            <span className="absolute -right-0.5 -top-0.5 size-2 rounded-full bg-emerald-300 ring-2 ring-[#111827]" />
+          <span className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-primary text-sm font-bold text-primary-foreground shadow-fab">
+            <span className="absolute -right-0.5 -top-0.5 size-2 rounded-full bg-state-correct ring-2 ring-surface-rail" />
             FE
           </span>
           <div>
-            <p className="font-heading text-sm font-bold tracking-tight text-white">{t("common.appName")}</p>
-            <p className="mt-0.5 text-[11px] text-slate-400">{t("common.tagline")}</p>
+            <p className="font-heading text-sm font-bold tracking-tight text-surface-rail-foreground">{t("common.appName")}</p>
+            <p className="mt-0.5 text-[11px] text-surface-rail-foreground/60">{t("common.tagline")}</p>
           </div>
         </div>
         <nav className="flex-1 space-y-1 px-4 py-5" aria-label="Primary navigation">
-          <p className="px-3 pb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Workspace</p>
+          <p className="px-3 pb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-surface-rail-foreground/60">Workspace</p>
           {primaryItems.map((item) => {
             const active = isActive(item.href);
             return (
@@ -55,12 +58,12 @@ export function AppShell({
                 className={cn(
                   "relative flex items-center gap-3 rounded-2xl px-3.5 py-3 text-sm font-medium transition-all",
                   active
-                    ? "bg-white/12 text-white shadow-inner shadow-white/5"
-                    : "text-slate-400 hover:bg-white/6 hover:text-white",
+                    ? "bg-surface-rail-active text-surface-rail-foreground"
+                    : "text-surface-rail-foreground/60 hover:bg-surface-rail-active/60 hover:text-surface-rail-foreground",
                 )}
               >
                 {active && (
-                  <span className="absolute -left-4 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-indigo-400" />
+                  <span className="absolute -left-4 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-primary" />
                 )}
                 <item.icon className="h-4 w-4" weight={active ? "fill" : "regular"} />
                 {t(item.labelKey as never)}
@@ -68,8 +71,8 @@ export function AppShell({
             );
           })}
           {adminItems.length > 0 && (
-            <div className="mt-8 border-t border-white/10 pt-5">
-              <p className="px-3 pb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Admin</p>
+            <div className="mt-8 border-t border-surface-rail-foreground/10 pt-5">
+              <p className="px-3 pb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-surface-rail-foreground/60">Admin</p>
               {adminItems.map((item) => {
                 const active = isActive(item.href);
                 return (
@@ -78,7 +81,7 @@ export function AppShell({
                     href={item.href}
                     className={cn(
                       "relative flex items-center gap-3 rounded-2xl px-3.5 py-3 text-sm font-medium transition-all",
-                      active ? "bg-white/12 text-white" : "text-slate-400 hover:bg-white/6 hover:text-white",
+                      active ? "bg-surface-rail-active text-surface-rail-foreground" : "text-surface-rail-foreground/60 hover:bg-surface-rail-active/60 hover:text-surface-rail-foreground",
                     )}
                   >
                     <item.icon className="h-4 w-4" weight={active ? "fill" : "regular"} />
@@ -89,7 +92,7 @@ export function AppShell({
             </div>
           )}
         </nav>
-        <div className="mx-4 mb-5 flex items-center justify-between gap-2 rounded-2xl border border-white/10 bg-white/5 p-3">
+        <div className="mx-4 mb-5 flex items-center justify-between gap-2 rounded-2xl border border-surface-rail-foreground/10 bg-surface-rail-foreground/5 p-3">
           <LocaleSwitcher />
           <div className="flex items-center gap-1">
             <ThemeToggle />
@@ -99,9 +102,9 @@ export function AppShell({
       </aside>
 
       {/* Mobile top bar */}
-      <header className="flex h-[4.5rem] items-center justify-between border-b bg-white px-4 shadow-sm dark:bg-[#111827] md:hidden">
+      <header className="flex h-[4.5rem] items-center justify-between border-b bg-card px-4 shadow-card dark:bg-surface-rail md:hidden">
         <span className="flex items-center gap-2 font-heading font-bold">
-          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 text-xs font-bold text-white">FE</span>
+          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-xs font-bold text-primary-foreground">FE</span>
           {t("common.appName")}
         </span>
         <div className="flex items-center gap-2">
@@ -114,7 +117,7 @@ export function AppShell({
       <main className="min-w-0 flex-1 overflow-y-auto pb-20 md:pb-0">{children}</main>
 
       {/* Mobile bottom nav */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 grid h-[calc(4.5rem+env(safe-area-inset-bottom))] border-t bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-12px_35px_rgba(15,23,42,0.1)] backdrop-blur dark:bg-[#111827]/95 md:hidden"
+      <nav className="fixed inset-x-0 bottom-0 z-40 grid h-[calc(4.5rem+env(safe-area-inset-bottom))] border-t bg-card/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-12px_35px_rgba(15,23,42,0.1)] backdrop-blur dark:bg-surface-rail/95 md:hidden"
         style={{ gridTemplateColumns: `repeat(${primaryItems.length}, minmax(0, 1fr))` }}
         aria-label="Primary navigation"
       >

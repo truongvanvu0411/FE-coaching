@@ -144,7 +144,7 @@ export default function ReviewQueuePage() {
         </form>
       </div>
 
-      <Card className="border-amber-300 bg-amber-50/50 shadow-none"><CardContent className="p-4 text-sm text-amber-950"><strong>Review rule:</strong> mở scan gốc, sửa body/4 choices nếu OCR sai, chọn đáp án chính thức, rồi mới verify. Không có bulk verification.</CardContent></Card>
+      <Card className="border-state-bookmark/40 bg-state-bookmark/10 shadow-none"><CardContent className="p-4 text-sm text-foreground"><strong>Review rule:</strong> mở scan gốc, sửa body/4 choices nếu OCR sai, chọn đáp án chính thức, rồi mới verify. Không có bulk verification.</CardContent></Card>
 
       {loading && <div className="space-y-4" aria-live="polite">{Array.from({ length: 3 }).map((_, index) => <Card key={index}><CardContent className="space-y-4 p-6"><Skeleton className="h-5 w-1/3" /><Skeleton className="h-16 w-full" /><Skeleton className="h-9 w-48" /></CardContent></Card>)}</div>}
       {!loading && error && <Card className="border-dashed shadow-none"><CardContent className="space-y-3 p-8 text-center"><p className="text-sm text-muted-foreground">Unable to load the review queue.</p><Button variant="outline" onClick={() => setRefresh((value) => value + 1)}>{t("admin.retry")}</Button></CardContent></Card>}
@@ -154,7 +154,7 @@ export default function ReviewQueuePage() {
         const audit = q.reviewAudit;
         const checked = sourceChecked.has(q.id);
         const draft = drafts[q.id];
-        return <Card key={q.id} className="border-0 shadow-sm">
+        return <Card key={q.id} className="border-0 shadow-card">
           <CardHeader className="flex flex-col gap-3 border-b bg-muted/20 sm:flex-row sm:items-center sm:justify-between"><CardTitle className="text-base">{q.id}</CardTitle><div className="flex flex-wrap gap-2"><Badge variant="outline">{q.section}</Badge><Badge variant="outline">{q.sourceType}</Badge><Badge variant="outline">{q.topic.nameJa}</Badge><Badge variant={audit?.risk === "P0" ? "destructive" : "secondary"}>{audit?.risk ?? "NO_AUDIT"}</Badge></div></CardHeader>
           <CardContent className="space-y-4 p-5">
             {audit && <div className="rounded-xl border bg-muted/30 p-3 text-xs"><div className="flex flex-wrap gap-x-4 gap-y-1"><span>Source: {audit.session} · {audit.questionNumber}</span><span>OCR: {Math.round(audit.parseConfidence * 100)}%</span><span>Mapping: {audit.mappingStatus}</span></div>{audit.issues.length > 0 && <p className="mt-2 text-destructive">Issues: {audit.issues.join(", ")}</p>}<details className="mt-3"><summary className="cursor-pointer font-medium">Mở scan gốc để đối chiếu</summary><div className="mt-3 overflow-auto rounded-lg border bg-background p-2"><img src={audit.sourceImageUrl} alt={`${audit.session} ${audit.questionNumber} original scan`} className="max-h-[560px] w-full object-contain" /></div><label className="mt-3 flex items-start gap-2 font-medium"><input type="checkbox" checked={checked} onChange={(event) => markSourceChecked(q.id, event.target.checked)} className="mt-0.5 size-4 accent-primary" />Đã đối chiếu scan, nội dung, đủ 4 lựa chọn và đáp án.</label></details></div>}

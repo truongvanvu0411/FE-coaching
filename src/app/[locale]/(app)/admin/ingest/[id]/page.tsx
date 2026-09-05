@@ -183,7 +183,7 @@ export default function IngestJobDetailPage({
         <Badge variant="outline" className="w-fit">{job.status}</Badge>
       </div>
 
-      <Card className="border-0 shadow-sm">
+      <Card className="border-0 shadow-card">
         <CardHeader>
           <CardTitle className="text-base">OCR / PDF Text</CardTitle>
         </CardHeader>
@@ -198,7 +198,7 @@ export default function IngestJobDetailPage({
         </CardContent>
       </Card>
 
-      <Card className="border-0 shadow-sm">
+      <Card className="border-0 shadow-card">
         <CardHeader>
           <CardTitle className="text-base">Split into a question (human verification)</CardTitle>
         </CardHeader>
@@ -343,7 +343,7 @@ export default function IngestJobDetailPage({
       </Card>
 
       {job.questions.length > 0 && (
-        <Card className="border-0 shadow-sm">
+        <Card className="border-0 shadow-card">
           <CardHeader>
             <CardTitle className="text-base">Questions from this job</CardTitle>
           </CardHeader>

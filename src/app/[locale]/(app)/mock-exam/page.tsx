@@ -29,7 +29,7 @@ export default async function MockExamPage() {
         <p className="text-muted-foreground">Practice under time pressure with verified questions from the current syllabus.</p>
       </div>
 
-      <Card className="overflow-hidden border-0 bg-primary text-primary-foreground shadow-lg shadow-primary/15">
+      <Card className="overflow-hidden border-0 bg-primary text-primary-foreground shadow-fab shadow-primary/15">
         <CardContent className="flex flex-col gap-6 p-6 sm:flex-row sm:items-center sm:justify-between md:p-8">
           <div className="flex items-start gap-4">
             <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary-foreground/15"><GraduationCap className="size-6" weight="duotone" /></span>
@@ -47,7 +47,7 @@ export default async function MockExamPage() {
           const questionCount = Math.min(preset.count, preset.available);
           const query = new URLSearchParams({ section: preset.section, count: String(questionCount), minutes: String(preset.minutes) });
           return (
-            <Card key={preset.section} className="border-0 shadow-sm">
+            <Card key={preset.section} className="border-0 shadow-card">
               <CardHeader className="flex flex-row items-start justify-between gap-4">
                 <div>
                   <p className="text-sm font-medium text-primary">{t("question.section")}</p>

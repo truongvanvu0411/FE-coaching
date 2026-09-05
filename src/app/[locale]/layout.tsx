@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, Montserrat } from "next/font/google";
+import { Geist_Mono, Montserrat, Noto_Sans_JP } from "next/font/google";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { SessionProvider } from "next-auth/react";
@@ -16,6 +16,20 @@ const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin", "vietnamese"],
   display: "swap",
+});
+
+// The comment above used to promise Zen Kaku Gothic New was "loaded below". It
+// never was — there was no stylesheet link, and --font-sans fell through to
+// whatever Japanese face the operating system happened to have: Hiragino on
+// macOS, Yu Gothic on Windows, frequently nothing on Linux or Android. Every
+// question body in this app is Japanese, so it was the largest unowned piece of
+// the design.
+const notoSansJP = Noto_Sans_JP({
+  variable: "--font-noto-jp",
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  display: "swap",
+  preload: false,
 });
 
 const geistMono = Geist_Mono({
@@ -54,7 +68,7 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
-      className={`${montserrat.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${montserrat.variable} ${notoSansJP.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

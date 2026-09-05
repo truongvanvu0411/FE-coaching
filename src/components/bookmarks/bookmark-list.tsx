@@ -56,7 +56,7 @@ export function BookmarkList({ initialBookmarks }: { initialBookmarks: Bookmark[
   return (
     <div className="space-y-3">
       {bookmarks.map(({ question }) => (
-        <Card key={question.id} className="border-0 shadow-sm">
+        <Card key={question.id} className="border-0 shadow-card">
           <CardContent className="space-y-4 p-5">
             <div className="flex items-start justify-between gap-4">
               <div className="flex flex-wrap gap-2">

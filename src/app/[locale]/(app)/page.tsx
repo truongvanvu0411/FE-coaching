@@ -60,7 +60,7 @@ export default async function HomePage() {
           <h1 className="font-heading text-3xl font-bold tracking-[-0.04em] md:text-5xl">{user.name || t("common.appName")}</h1>
           <p className="max-w-xl text-sm text-muted-foreground md:text-base">{t("dashboard.todayPrompt")}</p>
         </div>
-        <Button nativeButton={false} render={<Link href="/practice" />} size="lg" className="w-full rounded-2xl px-5 shadow-lg shadow-primary/20 md:w-auto">
+        <Button nativeButton={false} render={<Link href="/practice" />} size="lg" className="w-full rounded-2xl px-5 shadow-fab md:w-auto">
           <BookOpen className="size-4" weight="bold" />
           {t("practice.newSession")}
           <ArrowRight className="size-4" weight="bold" />
@@ -68,39 +68,42 @@ export default async function HomePage() {
       </section>
 
       <section className="grid gap-5 xl:grid-cols-[minmax(0,1.55fr)_minmax(340px,0.8fr)]">
-        <Card className="relative min-h-[330px] overflow-hidden border-0 bg-[#171c3a] text-white shadow-2xl shadow-indigo-950/20">
-          <div className="absolute -right-20 -top-24 size-72 rounded-full bg-indigo-400/20 blur-3xl" />
-          <div className="absolute -bottom-28 left-1/3 size-72 rounded-full bg-violet-500/20 blur-3xl" />
+        {/* The reference's hero: light surface, big number, one primary action.
+            Replaces a near-black #171c3a card that fought the rest of the page. */}
+        <Card className="relative min-h-[330px] overflow-hidden border-0 bg-card shadow-card">
           <CardContent className="relative flex h-full flex-col justify-between gap-10 p-7 md:p-9">
             <div className="flex items-start justify-between gap-4">
               <div className="space-y-4">
-                <Badge className="border border-white/15 bg-white/10 text-white hover:bg-white/15">
+                <Badge className="bg-accent text-accent-foreground hover:bg-accent">
                   {latestTopic ? t("practice.continueLearning") : t("practice.newSession")}
                 </Badge>
                 <div className="space-y-2">
                   <h2 className="max-w-xl font-heading text-3xl font-bold tracking-[-0.04em] md:text-4xl">
                     {latestTopic || t("practice.chooseFilters")}
                   </h2>
-                  <p className="max-w-lg text-sm leading-6 text-indigo-100/70">
+                  <p className="max-w-lg text-body text-muted-foreground">
                     {latestTopic ? `${t("dashboard.recentActivity")}: ${latestTopic}` : t("dashboard.startFirstSession")}
                   </p>
                 </div>
               </div>
-              <div className="hidden size-24 shrink-0 rounded-full p-2 sm:block" style={{ background: `conic-gradient(#a5b4fc ${accuracy}%, rgba(255,255,255,.12) 0)` }}>
-                <div className="flex size-full items-center justify-center rounded-full bg-[#171c3a] text-center">
+              <div
+                className="hidden size-24 shrink-0 rounded-full p-2 sm:block"
+                style={{ background: `conic-gradient(var(--primary) ${accuracy}%, var(--muted) 0)` }}
+              >
+                <div className="flex size-full items-center justify-center rounded-full bg-card text-center">
                   <span className="text-xl font-bold">{accuracy}%</span>
                 </div>
               </div>
             </div>
             <div className="space-y-4">
-              <div className="flex items-center justify-between text-xs font-medium text-indigo-100/70">
+              <div className="flex items-center justify-between text-label text-muted-foreground">
                 <span>{t("dashboard.accuracyByTopic")}</span>
                 <span>{totalAttempts} {t("dashboard.questionsCompleted")}</span>
               </div>
-              <div className="h-2 overflow-hidden rounded-full bg-white/10">
-                <div className="h-full rounded-full bg-gradient-to-r from-indigo-300 to-violet-300 transition-all" style={{ width: `${Math.max(accuracy, 4)}%` }} />
+              <div className="h-2 overflow-hidden rounded-full bg-muted">
+                <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${Math.max(accuracy, 4)}%` }} />
               </div>
-              <Button nativeButton={false} render={<Link href="/practice" />} variant="secondary" className="rounded-xl bg-white text-slate-900 hover:bg-indigo-50">
+              <Button nativeButton={false} render={<Link href="/practice" />} size="lg" className="rounded-xl shadow-fab">
                 {latestTopic ? t("practice.continueLearning") : t("practice.startSession")}
                 <ArrowRight className="size-4" weight="bold" />
               </Button>
@@ -117,7 +120,7 @@ export default async function HomePage() {
       </section>
 
       <section className="grid gap-5 lg:grid-cols-[1.25fr_0.75fr]">
-        <Card className="border-0 bg-white shadow-sm dark:bg-card">
+        <Card className="border-0 bg-card shadow-card">
           <CardContent className="p-6 md:p-7">
             <div className="mb-6 flex items-end justify-between gap-4">
               <div>
@@ -135,10 +138,10 @@ export default async function HomePage() {
             </div>
           </CardContent>
         </Card>
-        <Card className="border-0 bg-gradient-to-br from-violet-50 to-indigo-50 shadow-sm dark:from-indigo-950/50 dark:to-violet-950/40">
+        <Card className="border-0 bg-accent/60 shadow-card">
           <CardContent className="flex h-full flex-col justify-between gap-8 p-6 md:p-7">
             <div>
-              <span className="flex size-11 items-center justify-center rounded-2xl bg-white text-primary shadow-sm dark:bg-white/10"><ChartLineUp className="size-5" weight="duotone" /></span>
+              <span className="flex size-11 items-center justify-center rounded-2xl bg-card text-primary shadow-card"><ChartLineUp className="size-5" weight="duotone" /></span>
               <h2 className="mt-5 font-heading text-xl font-bold tracking-tight">{t("tutor.title")}</h2>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">{t("tutor.disclaimer")}</p>
             </div>
@@ -151,14 +154,16 @@ export default async function HomePage() {
 }
 
 function StatCard({ icon: Icon, value, label, tone }: { icon: typeof CheckCircle; value: string | number; label: string; tone: "indigo" | "blue" | "amber" | "violet" }) {
+  // Colour carries meaning, not decoration (spec §5): accuracy and completion
+  // read as the app's own identity, streak and bookmarks as their own states.
   const tones = {
-    indigo: "bg-indigo-50 text-indigo-600 dark:bg-indigo-950/50 dark:text-indigo-300",
-    blue: "bg-sky-50 text-sky-600 dark:bg-sky-950/50 dark:text-sky-300",
-    amber: "bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-300",
-    violet: "bg-violet-50 text-violet-600 dark:bg-violet-950/50 dark:text-violet-300",
+    indigo: "bg-accent text-accent-foreground",
+    blue: "bg-section-a/12 text-section-a",
+    amber: "bg-state-bookmark/15 text-state-bookmark",
+    violet: "bg-section-b/12 text-section-b",
   };
   return (
-    <Card className="border-0 bg-white shadow-sm dark:bg-card">
+    <Card className="border-0 bg-card shadow-card">
       <CardContent className="flex min-h-[152px] flex-col justify-between gap-4 p-5">
         <span className={`flex size-10 items-center justify-center rounded-2xl ${tones[tone]}`}><Icon className="size-5" weight="duotone" /></span>
         <div><p className="font-heading text-2xl font-bold tracking-tight">{value}</p><p className="mt-1 text-xs leading-4 text-muted-foreground">{label}</p></div>
@@ -169,8 +174,8 @@ function StatCard({ icon: Icon, value, label, tone }: { icon: typeof CheckCircle
 
 function QuickAction({ href, icon: Icon, title, description }: { href: string; icon: typeof BookOpen; title: string; description: string }) {
   return (
-    <Link href={href} className="group rounded-2xl border border-slate-200/80 bg-slate-50/70 p-4 transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:bg-white hover:shadow-lg hover:shadow-slate-200/60 dark:border-border dark:bg-muted/30 dark:hover:bg-muted">
-      <span className="flex size-10 items-center justify-center rounded-xl bg-white text-primary shadow-sm dark:bg-white/10"><Icon className="size-5" weight="duotone" /></span>
+    <Link href={href} className="group rounded-2xl border border-border bg-surface-sheet p-4 transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:bg-card hover:shadow-card dark:bg-muted/30 dark:hover:bg-muted">
+      <span className="flex size-10 items-center justify-center rounded-xl bg-card text-primary shadow-card"><Icon className="size-5" weight="duotone" /></span>
       <p className="mt-4 text-sm font-bold">{title}</p>
       <p className="mt-1 text-xs text-muted-foreground">{description}</p>
       <ArrowRight className="mt-4 size-4 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />

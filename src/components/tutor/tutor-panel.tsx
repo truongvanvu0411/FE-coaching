@@ -87,7 +87,7 @@ export function TutorPanel({ questionId }: { questionId: string }) {
   return (
     <>
       <div className="hidden md:block">
-        <Card className="border-0 shadow-sm lg:sticky lg:top-6 lg:min-h-[620px]">
+        <Card className="border-0 shadow-card lg:sticky lg:top-6 lg:min-h-[620px]">
           <CardHeader className="border-b bg-muted/20 px-5 py-4">
             <CardTitle className="flex items-center gap-2 text-lg">
               <Sparkle className="size-4 text-primary" weight="duotone" />

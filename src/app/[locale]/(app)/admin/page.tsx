@@ -40,16 +40,15 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="space-y-7 px-4 py-6 md:px-8 md:py-10">
-      <div className="relative overflow-hidden rounded-[2rem] bg-[#171c3a] px-6 py-8 text-white shadow-2xl shadow-indigo-950/15 md:px-9 md:py-10">
-        <div className="absolute -right-20 -top-24 size-72 rounded-full bg-indigo-400/20 blur-3xl" />
+      <div className="relative overflow-hidden rounded-[2rem] bg-card px-6 py-8 shadow-card md:px-9 md:py-10">
         <div className="relative flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-200">Admin workspace</p>
+            <p className="text-caption font-bold uppercase text-primary">Admin workspace</p>
             <h1 className="mt-3 font-heading text-3xl font-bold tracking-[-0.04em] md:text-4xl">{t("admin.title")}</h1>
-            <p className="mt-2 max-w-xl text-sm text-indigo-100/70">Monitor the question bank and keep the review pipeline moving.</p>
+            <p className="mt-2 max-w-xl text-body text-muted-foreground">Monitor the question bank and keep the review pipeline moving.</p>
           </div>
-          <Badge className="w-fit gap-2 border border-white/15 bg-white/10 px-3 py-2 text-white hover:bg-white/15">
-            <ShieldCheck className="size-4 text-emerald-300" weight="fill" />
+          <Badge className="w-fit gap-2 bg-accent px-3 py-2 text-accent-foreground hover:bg-accent">
+            <ShieldCheck className="size-4 text-state-correct" weight="fill" />
             {verifiedTotal} verified questions
           </Badge>
         </div>
@@ -62,10 +61,10 @@ export default async function AdminDashboardPage() {
       </div>
 
       {flagCount > 0 && (
-          <Card className="border-amber-500/30 bg-amber-500/5 shadow-none">
+          <Card className="border-state-bookmark/30 bg-state-bookmark/5 shadow-none">
           <CardContent className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-3">
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-amber-500/15 text-amber-700 dark:text-amber-300"><Flag className="size-5" weight="fill" /></span>
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-state-bookmark/15 text-state-bookmark"><Flag className="size-5" weight="fill" /></span>
               <div>
                 <p className="font-medium">{flagCount} unresolved learner reports</p>
                 <p className="text-sm text-muted-foreground">Review reported questions before the next publishing batch.</p>
@@ -76,7 +75,7 @@ export default async function AdminDashboardPage() {
         </Card>
       )}
 
-      <Card className="border-0 shadow-sm">
+      <Card className="border-0 shadow-card">
         <CardHeader className="flex flex-row items-end justify-between gap-4">
           <div>
             <CardTitle>{t("admin.stats")}</CardTitle>

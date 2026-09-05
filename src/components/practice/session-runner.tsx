@@ -102,7 +102,7 @@ export function SessionRunner({
   if (questions.length === 0) {
     return (
       <div className="mx-auto max-w-xl p-4 md:p-10">
-        <Card className="border-0 shadow-xl"><CardContent className="p-10 text-center text-sm text-muted-foreground">No questions available.</CardContent></Card>
+        <Card className="border-0 shadow-card"><CardContent className="p-10 text-center text-sm text-muted-foreground">No questions available.</CardContent></Card>
       </div>
     );
   }
@@ -110,11 +110,11 @@ export function SessionRunner({
   if (done) {
     return (
       <div className="mx-auto max-w-xl space-y-4 p-4 md:p-10">
-        <Card className="overflow-hidden border-0 shadow-2xl shadow-indigo-950/10">
-          <CardContent className="space-y-5 bg-[#171c3a] p-10 text-center text-white">
+        <Card className="overflow-hidden border-0 shadow-sheet">
+          <CardContent className="space-y-5 bg-card p-10 text-center">
             <h2 className="text-xl font-bold">{t("practice.sessionComplete")}</h2>
-            <p className="text-5xl font-bold tracking-tight text-indigo-200">{score} / {questions.length}</p>
-            <p className="text-indigo-100/65">{t("practice.score")}</p>
+            <p className="text-5xl font-bold tracking-tight text-primary">{score} / {questions.length}</p>
+            <p className="text-muted-foreground">{t("practice.score")}</p>
             <Button nativeButton={false} render={<Link href={mode === "mock_exam" ? "/mock-exam" : "/practice"} />}>{t("common.back")}</Button>
           </CardContent>
         </Card>
@@ -146,13 +146,13 @@ export function SessionRunner({
   };
 
   return (
-    <div className="mx-auto max-w-[1320px] space-y-5 px-4 py-5 md:px-8 md:py-8">
+    <div className="mx-auto min-h-screen max-w-[1320px] space-y-5 bg-surface-read px-4 py-5 md:px-8 md:py-8">
       {/* The visual baseline snapshots this bar rather than the page: the
           question itself is drawn at random, so a full-page shot would diff on
           every run. See tests/visual/visual.spec.ts. */}
       <div
         data-testid="session-chrome"
-        className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200/80 bg-white px-4 py-3 shadow-sm dark:border-border dark:bg-card md:px-5"
+        className="flex items-center justify-between gap-4 rounded-2xl border border-border bg-card px-4 py-3 shadow-card md:px-5"
       >
         <div className="min-w-0">
           <p className="truncate text-xs font-bold uppercase tracking-[0.16em] text-primary">{mode === "mock_exam" ? t("nav.mockExam") : t("nav.practice")}</p>
@@ -160,7 +160,7 @@ export function SessionRunner({
         </div>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" onClick={resetSession} aria-label="Reset session"><ArrowClockwise className="size-4" /></Button>
-          <div className={cn("rounded-xl px-3 py-2 text-xs font-bold", timeLimitSeconds && secondsLeft < 60 ? "bg-destructive/10 text-destructive" : "bg-indigo-50 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-200")}>
+          <div className={cn("rounded-xl px-3 py-2 text-xs font-bold", timeLimitSeconds && secondsLeft < 60 ? "bg-destructive/10 text-destructive" : "bg-accent text-accent-foreground")}>
             {timeLimitSeconds ? `${t("mockExam.timeRemaining")}: ${formatTime(secondsLeft)}` : `${t("practice.score")}: ${score}`}
           </div>
         </div>
@@ -189,14 +189,14 @@ export function SessionRunner({
 
           {answered && (
             <div className="sticky bottom-20 z-10 mt-4 flex justify-end md:static">
-              <Button size="lg" className="w-full shadow-lg sm:w-auto" onClick={next}>{t("common.next")}</Button>
+              <Button size="lg" className="w-full shadow-fab sm:w-auto" onClick={next}>{t("common.next")}</Button>
             </div>
           )}
         </div>
 
         <aside className="hidden space-y-5 lg:sticky lg:top-6 lg:block">
           {showTutor && answered && <TutorPanel questionId={question.id} />}
-          <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm dark:border-border dark:bg-card">
+          <div className="rounded-2xl border border-border bg-card p-4 shadow-card">
             <p className="mb-3 text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">Progress</p>
             <QuestionNavigator questions={questions} index={index} maxVisited={maxVisited} answers={answers} onSelect={goTo} />
           </div>

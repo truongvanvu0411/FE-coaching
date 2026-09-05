@@ -8,6 +8,63 @@ a user can see, which is what makes them safe to land quickly.
 
 ---
 
+## Status — measured 3 Sep, not estimated
+
+Done and committed:
+
+- **Phase 0** (`00b7c99`) — 52 visual snapshots, stable across consecutive runs
+- **Phase 0a** (`9f6384b`) — every token declared and registered in `@theme inline`
+- **Phase 1, token values** — identity moved from violet `oklch(0.55 0.22 272)` to
+  blue `oklch(0.55 0.19 255)`; surfaces, rail and dark card retuned to the
+  contrast-verified palette
+- **Shell** — page gradient applied, rail on `--surface-rail`, 0 hardcoded colours
+  left in the grep the spec defined
+- **Home** — dark `#171c3a` hero replaced with a light card, StatCard tones moved
+  onto section/state tokens
+
+### The original count was wrong
+
+The spec measured "94 occurrences across 7 files" with a grep that matched
+`indigo|violet|slate|…` but **not `white`, not `black`, and not the default
+`shadow-sm|md|lg|xl|2xl` utilities**. Those are the same problem: values that a
+token change cannot reach.
+
+The real figure, with the corrected pattern, is **98 across 21 files** — after
+home and the shell were already converted. Five UI primitives are in the list,
+which the spec assumed were clean.
+
+| File | Left |
+|---|---|
+| `practice/page.tsx` | 20 |
+| `admin/page.tsx` | 18 |
+| `session-runner.tsx` | 18 |
+| `app-shell.tsx` | 9 |
+| `admin/review/page.tsx` | 4 |
+| `progress/page.tsx` | 4 |
+| `(auth)/layout.tsx` | 3 |
+| `admin/ingest/[id]/page.tsx` | 3 |
+| `ui/dropdown-menu.tsx` | 2 |
+| `ui/sheet.tsx` | 2 |
+| `admin/ingest/page.tsx`, `mock-exam/page.tsx`, `login/page.tsx`, `register-form.tsx` | 2 each |
+| `page.tsx` (home), `bookmark-list.tsx`, `question-card.tsx`, `tutor-panel.tsx`, `ui/dialog.tsx`, `ui/select.tsx`, `ui/tabs.tsx` | 1 each |
+
+Use this pattern from now on — the one in §12 below misses a third of the work:
+
+```bash
+grep -rnE '\[#[0-9a-fA-F]{3,8}\]|(bg|text|from|to|via|border|shadow|ring)-(indigo|violet|slate|sky|amber|emerald|rose|purple|blue|zinc|gray|white|black|red|green|yellow|teal|cyan|orange|pink|neutral|stone)(-[0-9]{2,3})?(\/[0-9]{1,3})?|shadow-(sm|md|lg|xl|2xl|inner)' src --include=*.tsx
+```
+
+### Still wearing the old design
+
+Four surfaces still carry the dark palette the rebuild replaces:
+
+- `practice/page.tsx:43` — `#171c3a` hero
+- `admin/page.tsx:43` — `#171c3a` hero
+- `session-runner.tsx:114` — `#171c3a` end-of-session score panel
+- `(auth)/layout.tsx:5` — `#11152e` behind login
+
+---
+
 ## Phase 0 — Visual baseline (blocks everything)
 
 Nothing else in this document is verifiable without this.

@@ -73,13 +73,13 @@ export default async function ProgressPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <Card className="border-0 shadow-sm">
+        <Card className="border-0 shadow-card">
           <CardContent className="space-y-2 p-5">
             <p className="text-2xl font-bold">{totalAttempts}</p>
             <p className="text-xs text-muted-foreground">{t("dashboard.totalAttempts")}</p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-sm">
+        <Card className="border-0 shadow-card">
           <CardContent className="space-y-2 p-5">
             <p className="text-2xl font-bold">
               {totalAttempts > 0 ? Math.round((totalCorrect / totalAttempts) * 100) : 0}%
@@ -87,7 +87,7 @@ export default async function ProgressPage() {
             <p className="text-xs text-muted-foreground">{t("dashboard.accuracyByTopic")}</p>
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-sm">
+        <Card className="border-0 shadow-card">
           <CardContent className="space-y-2 p-5">
             <p className="text-2xl font-bold">{streak}</p>
             <p className="text-xs text-muted-foreground">{t("dashboard.streak")}</p>
@@ -95,7 +95,7 @@ export default async function ProgressPage() {
         </Card>
       </div>
 
-      <Card className="border-0 shadow-sm">
+      <Card className="border-0 shadow-card">
         <CardHeader>
           <CardTitle className="text-base">{t("dashboard.weakTopics")}</CardTitle>
         </CardHeader>
